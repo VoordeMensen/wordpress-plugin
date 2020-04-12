@@ -31,3 +31,10 @@ function vdm_load_loader() {
 
 add_action( "template_redirect", "vdm_load_loader" );
 
+
+// just for fun, why not 
+function register_session() {
+    if (!session_id())
+        session_start();
+}
+add_action('init', 'register_session', 1);

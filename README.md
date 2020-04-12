@@ -8,6 +8,7 @@ Connect single posts or pages to an event in VoordeMensen and use shortcodes to 
 ## Shortcodes
 * `[vdm_buy button='Text on button']` to create a single buy button 
 * `[vdm_eventbuttons]` to create multiple buttons for each single subevent
+* `[vdm_basketcounter]` the number of tickets in the basket
 
 ## Full documentation
 Available at https://docs.voordemensen.nl/api/wordpress-plugin
