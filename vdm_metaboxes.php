@@ -2,13 +2,14 @@
 // add events metaboxes
 function vdm_add_custom_box()
 {
-    // $screens = ['post', 'page'];
+    $screens = ['post', 'page'];
+    $screens = apply_filters( 'filter_vdm_post_types', $screens );
     foreach ($screens as $screen) {
         add_meta_box(
             'vdm_box_id',           // Unique ID
             'VoordeMensen',  // Box title
-            'vdm_custom_box_html'
-            // $screen                   // Post type
+            'vdm_custom_box_html',  // Content callback, must be of type callable
+            $screen                   // Post type
         );
     }
 }
