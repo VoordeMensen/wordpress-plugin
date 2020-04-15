@@ -10,6 +10,7 @@ function vdm_shortcode_buy( $atts = [], $content = null, $tag='') {
 		$atts['button'] = 'Koop nu';
 	}
     $content = "<button onclick='javascript:vdm_order($event_id,\"".session_id()."\");'>".$atts['button']."</button>";
+	$content = apply_filters( 'vdm_buy_content', $content, $event_id, $atts );
     return $content;
 }
 
