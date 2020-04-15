@@ -25,7 +25,7 @@ function vdm_load_loader() {
 	if($vdm_options['vdm_loader_type']=='side') {
 		wp_enqueue_script('vdm_loader','https://tickets.voordemensen.nl/'.$vdm_client_shortname.'/iframes/vdm_sideloader.js');
 	} else {
-		wp_enqueue_script('vdm_loader','http://tickets.eu.ngrok.io/'.$vdm_client_shortname.'/iframes/vdm_loader.js');	
+		wp_enqueue_script('vdm_loader','https://tickets.voordemensen.nl/'.$vdm_client_shortname.'/iframes/vdm_loader.js');	
 	}
 }
 
