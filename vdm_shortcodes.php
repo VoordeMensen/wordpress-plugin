@@ -63,9 +63,11 @@ function vdm_event_location( $atts = [], $content = null, $tag='') {
 			}
 		}
 	}
-	$location=array_unique($location);
-	foreach($location as $loc) {
-		$loc=$loc.", ";
+	if($location) {
+		$location=array_unique($location);
+		foreach($location as $loc) {
+			$loc=$loc.", ";
+		}
 	}
 	return rtrim($loc,', ');
 }

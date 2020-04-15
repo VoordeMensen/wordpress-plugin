@@ -3,7 +3,7 @@
  * Plugin Name:       VoordeMensen
  * Plugin URI:        https://voordemensen.nl
  * Description:       Verbind WordPress met het VoordeMensen kaartverkoopsysteem
- * Version:           1.0.2
+ * Version:           1.0.3
  * Author:            VoordeMensen
  * Author URI:        https://voordemensen.nl
  * License:           GPL v2 or later
