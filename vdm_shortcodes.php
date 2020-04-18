@@ -10,7 +10,24 @@ function vdm_shortcode_buy( $atts = [], $content = null, $tag='') {
 		$atts['button'] = 'Koop nu';
 	}
     $content = "<button onclick='javascript:vdm_order($event_id,\"".session_id()."\");'>".$atts['button']."</button>";
+    $content = apply_filters( 'vdm_buy_content', $content, $event_id, $atts );
     return $content;
+}
+
+add_filter( 'vdm_buy_content', function( $content, $event_id, $atts ) {
+	if( empty( $event_id ) ) {
+		add_action( 'admin_notices', 'vdm_no_event_selected' );
+		return;
+	}
+	return $content;
+}, 10, 3 );
+
+function vdm_no_event_selected() {
+    ?>
+    <div class="error notice">
+        <p><?php _e( 'There has been an error. Bummer!', 'my_plugin_textdomain' ); ?></p>
+    </div>
+    <?php
 }
 
 add_shortcode('vdm_event_name', 'vdm_event_name');

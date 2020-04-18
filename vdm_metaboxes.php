@@ -1,16 +1,10 @@
 <?php
 // add events metaboxes
-function vdm_add_custom_box()
-{
-    // $screens = ['post', 'page'];
-    foreach ($screens as $screen) {
-        add_meta_box(
-            'vdm_box_id',           // Unique ID
-            'VoordeMensen',  // Box title
-            'vdm_custom_box_html'
-            // $screen                   // Post type
-        );
-    }
+function vdm_add_custom_box() {
+    add_meta_box(
+        'vdm_box_id',           // Unique ID
+        'VoordeMensen',  // Box title
+        'vdm_custom_box_html');
 }
 add_action('add_meta_boxes', 'vdm_add_custom_box');
 
@@ -24,7 +18,7 @@ function vdm_custom_box_html($post)
     if($events) {
         ?>
         <label for="vdm_event_id">Evenement:</label>
-        <select name="vdm_event_id" id="wporg_field" class="postbox">
+        <select name="vdm_event_id" id="vdm_event_id" class="postbox">
             <option value=""><?php __('selecteer...','vdm')?></option>
             <?php
     			usort($events, function($a, $b) {return strcmp($a->event_name, $b->event_name);});

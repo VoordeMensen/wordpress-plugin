@@ -3,7 +3,7 @@
  * Plugin Name:       VoordeMensen
  * Plugin URI:        https://voordemensen.nl
  * Description:       Verbind WordPress met het VoordeMensen kaartverkoopsysteem
- * Version:           1.0.3
+ * Version:           1.0.4
  * Author:            VoordeMensen
  * Author URI:        https://voordemensen.nl
  * License:           GPL v2 or later
@@ -34,9 +34,11 @@ function vdm_load_event() {
 	global $events;
 	$event_id = get_post_meta(get_the_ID(), '_vdm_meta_key', true);
 	$vdm_client_shortname = wp_strip_all_tags(get_option('vdm_client_shortname'));
-    $response = wp_remote_get( 'https://api.voordemensen.nl/v1/'.$vdm_client_shortname.'/events/'.$event_id );
-	$body = wp_remote_retrieve_body( $response );
-	$events = json_decode($body);
+	if(!empty($event_id)) {
+	    $response = wp_remote_get( 'https://api.voordemensen.nl/v1/'.$vdm_client_shortname.'/events/'.$event_id );
+		$body = wp_remote_retrieve_body( $response );
+		$events = json_decode($body);
+	}
 }
 
 add_action( "template_redirect", "vdm_load_loader" );
@@ -56,9 +58,21 @@ add_action('init', 'register_script');
 function register_script(){
 	wp_register_script( 'vdm_script', plugins_url('/js/vdm_script.js', __FILE__), array('jquery'), '2.5.1' );
 }
+add_action('admin_init', 'register_adminscript');
+function register_adminscript() {
+	wp_register_script( 'vdm_adminscript', plugins_url('/js/vdm_adminscript.js', __FILE__), array('jquery'), '2.5.1' );
+}
 
 add_action('wp_enqueue_scripts', 'enqueue_script');
 function enqueue_script(){
 	wp_enqueue_script('vdm_script');
 
 }
+
+function admin_queue( $hook ) {
+    global $post; 
+    if ( $hook == 'post-new.php' || $hook == 'post.php' ) {
+		wp_enqueue_script('vdm_adminscript');
+    }
+}
+add_action( 'admin_enqueue_scripts', 'admin_queue' );
