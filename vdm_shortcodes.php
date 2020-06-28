@@ -109,6 +109,24 @@ function vdm_tickettypes( $atts = [], $content = null, $tag='') {
 	}
 }
 
+add_shortcode('vdm_cartbutton','vdm_cartbutton');
+function vdm_cartbutton( $atts = [], $content = null, $tag='') {
+	if($atts=='') {
+		$atts=[];
+		$atts['button'] = 'Cart';
+	}
+	if(!(isset($atts['button']))) {
+		$atts['button'] = 'Cart';
+	}
+    $content = "<button onclick='javascript:vdm_order(\"cart\",\"".session_id()."\");'>".$atts['button']."</button>";
+    $content = apply_filters( 'vdm_cart_content', $content, $atts );
+    return $content;
+}
+
+add_filter( 'vdm_cart_content', function( $content, $atts ) {
+	return $content;
+}, 10, 3 );
+
 add_shortcode('vdm_eventbuttons', 'vdm_eventbuttons');
 function vdm_eventbuttons( $atts = [], $content = null, $tag='') {
 	$events = $GLOBALS['events'];
