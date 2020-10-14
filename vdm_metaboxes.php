@@ -14,15 +14,15 @@ function vdm_custom_box_html($post)
 	$event_id = get_post_meta($post->ID, '_vdm_meta_key', true);
     $response = wp_remote_get( 'https://api.voordemensen.nl/v1/'.$vdm_client_shortname.'/events' );
     $body = wp_remote_retrieve_body( $response );
-    $events = json_decode($body);
-    if($events) {
+    $vdm_events = json_decode($body);
+    if($vdm_events) {
         ?>
         <label for="vdm_event_id">Evenement:</label>
         <select name="vdm_event_id" id="vdm_event_id" class="postbox">
             <option value=""><?php __('selecteer...','vdm')?></option>
             <?php
-    			usort($events, function($a, $b) {return strcmp($a->event_name, $b->event_name);});
-    			foreach($events as $event) {
+    			usort($vdm_events, function($a, $b) {return strcmp($a->event_name, $b->event_name);});
+    			foreach($vdm_events as $event) {
     				if(isset($event->event_name)) {
     					echo "<option ";
     					if($event->event_id==$event_id) echo "SELECTED ";

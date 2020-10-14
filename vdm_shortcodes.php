@@ -32,33 +32,33 @@ function vdm_no_event_selected() {
 
 add_shortcode('vdm_event_name', 'vdm_event_name');
 function vdm_event_name( $atts = [], $content = null, $tag='') {
-	$events = $GLOBALS['events'];
-	if($events) {
-		return $events[0]->event_name;
+	$vdm_events = $GLOBALS['vdm_events'];
+	if($vdm_events) {
+		return $vdm_events[0]->event_name;
 	}
 }
 
 add_shortcode('vdm_event_extra', 'vdm_event_extra');
 function vdm_event_extra( $atts = [], $content = null, $tag='') {
-	$events = $GLOBALS['events'];
-	if($events) {
-		return $events[0]->event_text;
+	$vdm_events = $GLOBALS['vdm_events'];
+	if($vdm_events) {
+		return $vdm_events[0]->event_text;
 	}
 }
 
 add_shortcode('vdm_event_description', 'vdm_event_description');
 function vdm_event_description( $atts = [], $content = null, $tag='') {
-	$events = $GLOBALS['events'];
-	if($events) {
-		return $events[0]->event_short_text;
+	$vdm_events = $GLOBALS['vdm_events'];
+	if($vdm_events) {
+		return $vdm_events[0]->event_short_text;
 	}
 }
 
 add_shortcode('vdm_event_dates', 'vdm_event_dates');
 function vdm_event_dates( $atts = [], $content = null, $tag='') {
-	$events = $GLOBALS['events'];
-	if($events) {
-		foreach($events as $allevent) {
+	$vdm_events = $GLOBALS['vdm_events'];
+	if($vdm_events) {
+		foreach($vdm_events as $allevent) {
 			foreach($allevent->sub_events as $event) {
 				if($event->event_status!='pub') continue;
 				$event->event_date = date('d-m-Y',strtotime($event->event_date));
@@ -72,9 +72,9 @@ function vdm_event_dates( $atts = [], $content = null, $tag='') {
 
 add_shortcode('vdm_event_location', 'vdm_event_location');
 function vdm_event_location( $atts = [], $content = null, $tag='') {
-	$events = $GLOBALS['events'];
-	if($events) {
-		foreach($events as $allevent) {
+	$vdm_events = $GLOBALS['vdm_events'];
+	if($vdm_events) {
+		foreach($vdm_events as $allevent) {
 			foreach($allevent->sub_events as $event) {
 				$location[]=$event->location_name;
 			}
@@ -91,11 +91,11 @@ function vdm_event_location( $atts = [], $content = null, $tag='') {
 
 add_shortcode('vdm_tickettypes', 'vdm_tickettypes');
 function vdm_tickettypes( $atts = [], $content = null, $tag='') {
-	$events = $GLOBALS['events'];
+	$vdm_events = $GLOBALS['vdm_events'];
 	$vdm_client_shortname = wp_strip_all_tags(get_option('vdm_client_shortname'));
 
-	if($events) {
-		foreach($events as $allevent) {
+	if($vdm_events) {
+		foreach($vdm_events as $allevent) {
 			foreach($allevent->sub_events as $event) {
 			    $response = wp_remote_get( 'https://api.voordemensen.nl/v1/'.$vdm_client_shortname.'/tickettypes/'.$event->event_id );
 				$body = wp_remote_retrieve_body( $response );
@@ -129,10 +129,10 @@ add_filter( 'vdm_cart_content', function( $content, $atts ) {
 
 add_shortcode('vdm_eventbuttons', 'vdm_eventbuttons');
 function vdm_eventbuttons( $atts = [], $content = null, $tag='') {
-	$events = $GLOBALS['events'];
+	$vdm_events = $GLOBALS['vdm_events'];
 
-	if($events) {
-		foreach($events as $allevent) {
+	if($vdm_events) {
+		foreach($vdm_events as $allevent) {
 			foreach($allevent->sub_events as $event) {
 				$event->event_date = date('d-m-Y',strtotime($event->event_date));
 				$event->event_time = date('H:i',strtotime($event->event_time));

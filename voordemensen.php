@@ -31,13 +31,13 @@ function vdm_load_loader() {
 
 // preload the event_data
 function vdm_load_event() {
-	global $events;
+	global $vdm_events;
 	$event_id = get_post_meta(get_the_ID(), '_vdm_meta_key', true);
 	$vdm_client_shortname = wp_strip_all_tags(get_option('vdm_client_shortname'));
 	if(!empty($event_id)) {
 	    $response = wp_remote_get( 'https://api.voordemensen.nl/v1/'.$vdm_client_shortname.'/events/'.$event_id );
 		$body = wp_remote_retrieve_body( $response );
-		$events = json_decode($body);
+		$vdm_events = json_decode($body);
 	}
 }
 

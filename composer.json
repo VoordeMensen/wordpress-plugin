@@ -1,0 +1,17 @@
+{
+  "name": "voordemensen/wordpress-plugin",
+  "description": "VoordeMensen WordPress plugin",
+  "type": "wordpress-plugin",
+  "license": "GPL-3.0+",
+  "authors": [
+    {
+      "name": "Jay VoordeMensen",
+      "email": "jay@voordemensen.nl",
+      "homepage": "https://voordemensen.nl"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.4",
+    "composer/installers": "^1.0"
+  }
+}
