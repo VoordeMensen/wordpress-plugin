@@ -9,7 +9,7 @@ function vdm_shortcode_buy( $atts = [], $content = null, $tag='') {
 	if(!(isset($atts['button']))) {
 		$atts['button'] = 'Koop nu';
 	}
-    $content = "<button onclick='javascript:vdm_order($event_id,\"".session_id()."\");'>".$atts['button']."</button>";
+    $content = "<button onclick='javascript:vdm_order($event_id,\"".session_id('vdm')."\");'>".$atts['button']."</button>";
     $content = apply_filters( 'vdm_buy_content', $content, $event_id, $atts );
     return $content;
 }
@@ -118,7 +118,7 @@ function vdm_cartbutton( $atts = [], $content = null, $tag='') {
 	if(!(isset($atts['button']))) {
 		$atts['button'] = 'Cart';
 	}
-    $content = "<button onclick='javascript:vdm_order(\"cart\",\"".session_id()."\");'>".$atts['button']."</button>";
+    $content = "<button onclick='javascript:vdm_order(\"cart\",\"".session_id('vdm')."\");'>".$atts['button']."</button>";
     $content = apply_filters( 'vdm_cart_content', $content, $atts );
     return $content;
 }
@@ -138,7 +138,7 @@ function vdm_eventbuttons( $atts = [], $content = null, $tag='') {
 				$event->event_time = date('H:i',strtotime($event->event_time));
 				if($event->event_status!='pub') continue;
 				if($event->event_free>0) {
-				    $content .= "<button id='btn$event->event_id' onclick='javascript:vdm_order($event->event_id,\"".session_id()."\");'>$event->event_date $event->event_time</button><br><br>";
+				    $content .= "<button id='btn$event->event_id' onclick='javascript:vdm_order($event->event_id,\"".session_id('vdm')."\");'>$event->event_date $event->event_time</button><br><br>";
 				} else {
 					$content .= "<button disabled style='pointer-events: none !important;filter: brightness(350%);' id='btn$event->event_id'>$event->event_date $event->event_time</button><br><br>";
 				}
@@ -151,7 +151,7 @@ function vdm_eventbuttons( $atts = [], $content = null, $tag='') {
 add_shortcode('vdm_basketcounter', 'vdm_basketcounter');
 function vdm_basketcounter( $atts = [], $content = null, $tag='') {
 	$vdm_client_shortname = wp_strip_all_tags(get_option('vdm_client_shortname'));
-    $response = wp_remote_get( 'https://tickets.voordemensen.nl/api/'.$vdm_client_shortname.'/cart/'.session_id());
+    $response = wp_remote_get( 'https://tickets.voordemensen.nl/api/'.$vdm_client_shortname.'/cart/'.session_id('vdm'));
 	$body = wp_remote_retrieve_body( $response );
 	$cart = json_decode($body);	
 	if (is_object($cart) || is_array($cart)) {
