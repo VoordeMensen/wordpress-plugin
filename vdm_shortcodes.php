@@ -70,6 +70,38 @@ function vdm_event_dates( $atts = [], $content = null, $tag='') {
 	return $datetimes;
 }
 
+add_shortcode('vdm_event_duration', 'vdm_event_duration');
+function vdm_event_duration($atts = [], $content = null, $tag='') {
+    $vdm_events = $GLOBALS['vdm_events'];
+    $durations = [];
+    if($vdm_events) {
+        foreach($vdm_events as $allevent) {
+            foreach($allevent->sub_events as $event) {
+                if($event->event_status!='pub') continue;
+
+                // Ensure event_end is set and is not zero
+                if(isset($event->event_end) && $event->event_end !== '00:00:00') {
+                    $start = new DateTime($event->event_time);
+                    $end = new DateTime($event->event_end);
+
+                    // Calculates the difference between the start and end times
+                    $duration = $start->diff($end);
+
+                    // Formats the duration as a string
+                    $durationStr = $duration->format('%h:%I');
+
+                    // Appends the event date and duration to the associative array
+                    // The duration string is used as the key to remove duplicates
+                    $durations[$event->event_date .' - '.$durationStr] = true;
+                }
+            }
+        }
+    }
+    
+    // Convert the array keys into a string separated by "<br>"
+    return implode("<br>", array_keys($durations));
+}
+
 add_shortcode('vdm_event_location', 'vdm_event_location');
 function vdm_event_location( $atts = [], $content = null, $tag='') {
 	$vdm_events = $GLOBALS['vdm_events'];
