@@ -92,7 +92,7 @@ function vdm_event_duration($atts = [], $content = null, $tag='') {
 
                     // Appends the event date and duration to the associative array
                     // The duration string is used as the key to remove duplicates
-                    $durations[$event->event_date .' - '.$durationStr] = true;
+                    $durations[$durationStr] = true;
                 }
             }
         }
