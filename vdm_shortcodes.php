@@ -56,19 +56,41 @@ function vdm_event_description( $atts = [], $content = null, $tag='') {
 
 add_shortcode('vdm_event_dates', 'vdm_event_dates');
 function vdm_event_dates( $atts = [], $content = null, $tag='') {
-	$vdm_events = $GLOBALS['vdm_events'];
-	if($vdm_events) {
-		foreach($vdm_events as $allevent) {
-			foreach($allevent->sub_events as $event) {
-				if($event->event_status!='pub') continue;
-				$event->event_date = date('d-m-Y',strtotime($event->event_date));
-				$event->event_time = date('H:i',strtotime($event->event_time));				
-				$datetimes.=$event->event_date .' - '.$event->event_time."<br>";
-			}
-		}
-	}
-	return $datetimes;
+    $vdm_events = $GLOBALS['vdm_events'];
+    $datetimes = [];
+
+    if($vdm_events) {
+        foreach($vdm_events as $allevent) {
+            foreach($allevent->sub_events as $event) {
+                if($event->event_status!='pub') continue;
+
+                // Create a DateTime object from the event date and time
+                $datetime = new DateTime($event->event_date . ' ' . $event->event_time);
+
+                // Format the date and time and store it in the array
+                $datetimes[] = [
+                    'datetime' => $datetime,
+                    'string' => $datetime->format('d-m-Y - H:i')
+                ];
+            }
+        }
+
+        // Sort the datetimes array by the datetime value in ascending order
+        usort($datetimes, function($a, $b) {
+            return $a['datetime'] <=> $b['datetime'];
+        });
+
+        // Extract the date and time strings and concatenate them with "<br>"
+        $datetimes = array_map(function($item) {
+            return $item['string'];
+        }, $datetimes);
+
+        $datetimes = implode("<br>", $datetimes);
+    }
+
+    return $datetimes;
 }
+
 
 add_shortcode('vdm_event_duration', 'vdm_event_duration');
 function vdm_event_duration($atts = [], $content = null, $tag='') {
@@ -88,7 +110,15 @@ function vdm_event_duration($atts = [], $content = null, $tag='') {
                     $duration = $start->diff($end);
 
                     // Formats the duration as a string
-                    $durationStr = $duration->format('%h:%I');
+                    $hours = $duration->format('%h');
+                    $minutes = $duration->format('%i');
+                    $durationStr = '';
+                    if ($hours > 0) {
+                        $durationStr .= $hours . ' h ';
+                    }
+                    if ($minutes > 0) {
+                        $durationStr .= $minutes . ' min';
+                    }
 
                     // Appends the event date and duration to the associative array
                     // The duration string is used as the key to remove duplicates

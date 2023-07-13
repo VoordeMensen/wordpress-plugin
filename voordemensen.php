@@ -3,7 +3,7 @@
  * Plugin Name:       VoordeMensen
  * Plugin URI:        https://voordemensen.nl
  * Description:       Verbind WordPress met het VoordeMensen kaartverkoopsysteem
- * Version:           1.0.6
+ * Version:           1.0.9
  * Author:            VoordeMensen
  * Author URI:        https://voordemensen.nl
  * License:           GPL v2 or later
@@ -25,7 +25,8 @@ function vdm_load_loader() {
 	if($vdm_options['vdm_loader_type']=='side') {
 		wp_enqueue_script('vdm_loader','https://tickets.voordemensen.nl/'.$vdm_client_shortname.'/iframes/vdm_sideloader.js');
 	} else {
-		wp_enqueue_script('vdm_loader','https://tickets.voordemensen.nl/'.$vdm_client_shortname.'/iframes/vdm_loader.js');	
+		// wp_enqueue_script('vdm_loader','https://tickets.voordemensen.nl/'.$vdm_client_shortname.'/iframes/vdm_loader.js');	
+		wp_enqueue_script('vdm_loader','https://tickets.test/'.$vdm_client_shortname.'/iframes/vdm_loader.js');	
 	}
 }
 
