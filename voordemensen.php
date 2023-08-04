@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name:       VoordeMensen
- * Plugin URI:        https://voordemensen.nl
+ * Plugin URI:        https://github.com/VoordeMensen/wordpress-plugin
  * Description:       Verbind WordPress met het VoordeMensen kaartverkoopsysteem
- * Version:           1.0.10
+ * Version:           1.0.11
  * Author:            VoordeMensen
  * Author URI:        https://voordemensen.nl
  * License:           GPL v2 or later

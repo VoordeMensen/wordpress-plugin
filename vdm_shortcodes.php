@@ -191,24 +191,42 @@ add_filter( 'vdm_cart_content', function( $content, $atts ) {
 
 add_shortcode('vdm_eventbuttons', 'vdm_eventbuttons');
 function vdm_eventbuttons( $atts = [], $content = null, $tag='') {
-	$vdm_events = $GLOBALS['vdm_events'];
+    $vdm_events = $GLOBALS['vdm_events'];
 
-	if($vdm_events) {
-		foreach($vdm_events as $allevent) {
-			foreach($allevent->sub_events as $event) {
-				$event->event_date = date('d-m-Y',strtotime($event->event_date));
-				$event->event_time = date('H:i',strtotime($event->event_time));
-				if($event->event_status!='pub') continue;
-				if($event->event_free>0) {
-				    $content .= "<button id='btn$event->event_id' onclick='javascript:vdm_order($event->event_id,\"".session_id()."\");'>$event->event_date $event->event_time</button><br><br>";
-				} else {
-					$content .= "<button disabled style='pointer-events: none !important;filter: brightness(350%);' id='btn$event->event_id'>$event->event_date $event->event_time</button><br><br>";
-				}
-			}
-		}
-	}
+    if($vdm_events) {
+        $tempEvents = array();
+        
+        // Populate the temporary array
+        foreach($vdm_events as $allevent) {
+            foreach($allevent->sub_events as $event) {
+                if($event->event_status != 'pub') continue;
+                $event->event_date = date('d-m-Y',strtotime($event->event_date));
+                $event->event_time = date('H:i',strtotime($event->event_time));
+                $tempEvents[] = array(
+                    'datetime' => strtotime($event->event_date . ' ' . $event->event_time),
+                    'event' => $event
+                );
+            }
+        }
+        
+        // Sort the temporary array by datetime
+        usort($tempEvents, function($a, $b) {
+            return $a['datetime'] <=> $b['datetime'];
+        });
+
+        // Print the sorted events
+        foreach($tempEvents as $tempEvent) {
+            $event = $tempEvent['event'];
+            if($event->event_free > 0) {
+                $content .= "<button id='btn$event->event_id' onclick='javascript:vdm_order($event->event_id,\"".session_id()."\");'>$event->event_date $event->event_time</button><br><br>";
+            } else {
+                $content .= "<button disabled style='pointer-events: none !important;filter: brightness(350%);' id='btn$event->event_id'>$event->event_date $event->event_time</button><br><br>";
+            }
+        }
+    }
     return $content;
 }
+
 
 add_shortcode('vdm_basketcounter', 'vdm_basketcounter');
 function vdm_basketcounter( $atts = [], $content = null, $tag='') {
