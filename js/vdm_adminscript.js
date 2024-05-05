@@ -10,9 +10,9 @@ const unsubscribe = wp.data.subscribe(function () {
     var didPostSaveRequestSucceed = select.didPostSaveRequestSucceed();
     var EditedPostContent = select.getEditedPostContent();
     if (isSavingPost && !isAutosavingPost && didPostSaveRequestSucceed) {
-        if(EditedPostContent.includes('[vdm') && !jQuery('#vdm_event_id').val()) {
+        if(EditedPostContent.includes('[vdm') && !jQuery('#voordemensen_event_id').val()) {
             unsubscribe();
-            jQuery('#vdm_event_id').focus();
+            jQuery('#voordemensen_event_id').focus();
             ( function( wp ) {
                 wp.data.dispatch( 'core/notices' ).createNotice(
                     'error',

@@ -3,8 +3,8 @@ Contributors: voordemensen
 Donate link: https://voordemensen.nl
 Tags: tickets, events, e-commerce
 Requires at least: 5.0
-Tested up to: 5.8
-Stable tag: 1.0.11
+Tested up to: 6.5
+Stable tag: 2.0.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
