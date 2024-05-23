@@ -42,7 +42,7 @@ function voordemensen_custom_box_html($post) {
                     '<option value="%s"%s>%s</option>',
                     esc_attr($event->event_id),
                     selected($event->event_id, $event_id, false),
-                    esc_html($event->event_name)
+                    esc_html($event->event_id . ' | ' . $event->event_name)
                 );
             }
         }

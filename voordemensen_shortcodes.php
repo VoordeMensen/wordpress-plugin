@@ -22,9 +22,11 @@ function voordemensen_shortcode_buy($atts = [], $content = null, $tag = '') {
     // Sanitize the button label
     $button_label = sanitize_text_field($atts['button']);
 
+    $session_id = voordemensen_get_session_id();
+
     // JavaScript function call should be properly escaped to prevent injection
     // Note: Ensure the JavaScript function `vdm_order` properly handles its inputs safely.
-    $onclick = sprintf("javascript:vdm_order('%s', '%s');", esc_js($event_id), esc_js(session_id()));
+    $onclick = sprintf("javascript:vdm_order('%s', '%s');", esc_js($event_id), esc_js($session_id));
 
     // Create the button HTML, escaping all output
     $content = "<button onclick='" . esc_attr($onclick) . "'>" . esc_html($button_label) . "</button>";
@@ -265,7 +267,7 @@ function voordemensen_cartbutton($atts = [], $content = null, $tag = '') {
 
     // Properly escape all dynamic data in the JavaScript function call to prevent XSS
     // Construct the JavaScript call with sanitized session_id for use in the HTML attribute
-    $session_id = esc_attr(session_id());
+    $session_id = voordemensen_get_session_id();
     $onclick = "vdm_order('cart','" . $session_id . "');";
 
     // Construct the button HTML, escaping the entire onclick attribute
@@ -311,7 +313,7 @@ function voordemensen_eventbuttons($atts = [], $content = null, $tag = '') {
         foreach ($tempEvents as $tempEvent) {
             $event = $tempEvent['event'];
             $buttonDate = gmdate('d-m-Y H:i', $tempEvent['datetime']);
-            $sessionId = esc_js(session_id());
+            $sessionId = voordemensen_get_session_id();
             $eventId = esc_attr($event->event_id);
 
             if ($event->event_free > 0) {
@@ -333,7 +335,9 @@ function voordemensen_basketcounter($atts = [], $content = null, $tag = '') {
     $options = get_option('voordemensen_options');
     $voordemensen_client_shortname = sanitize_text_field($options['voordemensen_client_shortname']);
 	$voordemensen_client_domainname = sanitize_text_field($options['voordemensen_client_domainname'] ?? 'tickets.voordemensen.nl');
-    $response = wp_remote_get('https://tickets.voordemensen.nl/api/' . $voordemensen_client_shortname . '/cart/' . esc_attr(session_id()));
+    $session_id = voordemensen_get_session_id();
+
+    $response = wp_remote_get('https://tickets.voordemensen.nl/api/' . $voordemensen_client_shortname . '/cart/' . esc_attr($session_id));
     $body = wp_remote_retrieve_body($response);
     $cart = json_decode($body);  
 
@@ -346,4 +350,10 @@ function voordemensen_basketcounter($atts = [], $content = null, $tag = '') {
     return "<span class='vdm_basketcounter'>" . esc_html($content) . "</span>";
 }
 
+function voordemensen_get_session_id() {
+    if (!isset($_SESSION['voordemensen_session_id'])) {
+        $_SESSION['voordemensen_session_id'] = bin2hex(random_bytes(16));
+    }
+    return $_SESSION['voordemensen_session_id'];
+}
 ?>
