@@ -54,9 +54,15 @@ function voordemensen_custom_box_html($post) {
 
 // save metaboxes
 function voordemensen_save_postdata($post_id) {
-    // Check if our nonce is set and verify that the nonce is valid.
-    if (!isset($_POST['voordemensen_event_nonce']) || !wp_verify_nonce($_POST['voordemensen_event_nonce'], 'voordemensen_save_event_id')) {
-        return;
+    // Check if our nonce is set.
+    if (!isset($_POST['voordemensen_event_nonce'])) {
+        return $post_id;
+    }
+
+    // Verify that the nonce is valid.
+    $nonce = sanitize_text_field(wp_unslash($_POST['voordemensen_event_nonce']));
+    if (!wp_verify_nonce($nonce, 'voordemensen_save_event_id')) {
+        return $post_id;
     }
 
     // Check if this is an autosave routine. If it is, our form has not been submitted, so we don't want to do anything.

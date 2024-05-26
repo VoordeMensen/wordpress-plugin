@@ -1,0 +1,4 @@
+input[id="voordemensen_client_domainname"] {
+    width: 300px; /* or any specific width, like 500px */
+    max-width: 30%; /* Ensures it does not overflow its container */
+}

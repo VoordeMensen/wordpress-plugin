@@ -354,6 +354,6 @@ function voordemensen_get_session_id() {
     if (!isset($_SESSION['voordemensen_session_id'])) {
         $_SESSION['voordemensen_session_id'] = bin2hex(random_bytes(16));
     }
-    return $_SESSION['voordemensen_session_id'];
+    return sanitize_text_field($_SESSION['voordemensen_session_id']);
 }
 ?>

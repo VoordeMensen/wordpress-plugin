@@ -3,7 +3,7 @@
  * Plugin Name:       VoordeMensen
  * Plugin URI:        https://github.com/VoordeMensen/wordpress-plugin
  * Description:       Verbind WordPress met het VoordeMensen kaartverkoopsysteem
- * Version:           2.0.11
+ * Version:           2.0.12
  * Requires at least: 5.0
  * Requires PHP:      7.2
  * Author:            VoordeMensen
@@ -80,11 +80,9 @@ function voordemensen_admin_queue( $hook ) {
 		wp_enqueue_script('voordemensen_adminscript');
     }
 
-    echo '<style>
-        input[id="voordemensen_client_domainname"] {
-            width: 300px; /* or any specific width, like 500px */
-            max-width: 30%; /* Ensures it does not overflow its container */
-        }
-    </style>';	
+    // Register and enqueue the external CSS file
+    wp_register_style('voordemensen_admin_style', plugins_url('css/admin-style.css', __FILE__));
+    wp_enqueue_style('voordemensen_admin_style');
 }
+
 add_action( 'admin_enqueue_scripts', 'voordemensen_admin_queue' );
