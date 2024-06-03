@@ -3,10 +3,11 @@
 if (!defined('ABSPATH'))
     exit; // Exit if accessed directly
 
-add_action("wp_loaded", "voordemensen_load_event" );
+add_action("wp_loaded", "voordemensen_load_event");
 
 add_shortcode('vdm_buy', 'voordemensen_shortcode_buy');
-function voordemensen_shortcode_buy($atts = [], $content = null, $tag = '') {
+function voordemensen_shortcode_buy($atts = [], $content = null, $tag = '')
+{
     if (is_admin()) {
         return;
     }
@@ -16,20 +17,20 @@ function voordemensen_shortcode_buy($atts = [], $content = null, $tag = '') {
 
     // Ensure $atts is an array
     $atts = shortcode_atts([
-        'button' => 'Koop nu' // Default button text
+        'button' => __('Koop nu', 'voordemensen')
     ], $atts, $tag);
 
     // Sanitize the button label
     $button_label = sanitize_text_field($atts['button']);
 
-    $session_id = voordemensen_get_session_id();
+    // Create a unique ID for the button
+    $button_id = 'vdm-buy-button-' . uniqid();
 
-    // JavaScript function call should be properly escaped to prevent injection
-    // Note: Ensure the JavaScript function `vdm_order` properly handles its inputs safely.
-    $onclick = sprintf("javascript:vdm_order('%s', '%s');", esc_js($event_id), esc_js($session_id));
+    // JavaScript function call will be handled by AJAX
+    $onclick = sprintf("javascript:vdmOrderWithSession('%s', '%s');", esc_js($event_id), esc_js($button_id));
 
     // Create the button HTML, escaping all output
-    $content = "<button onclick='" . esc_attr($onclick) . "'>" . esc_html($button_label) . "</button>";
+    $content = "<button id='" . esc_attr($button_id) . "' onclick='" . esc_attr($onclick) . "'>" . esc_html($button_label) . "</button>";
 
     // Apply filters to allow modification of the output by other plugins/themes
     $content = apply_filters('voordemensen_buy_content', $content, $event_id, $atts);
@@ -37,7 +38,7 @@ function voordemensen_shortcode_buy($atts = [], $content = null, $tag = '') {
     return $content;
 }
 
-add_filter('voordemensen_buy_content', function($content, $event_id, $atts) {
+add_filter('voordemensen_buy_content', function ($content, $event_id, $atts) {
     if (empty($event_id)) {
         add_action('admin_notices', 'voordemensen_no_event_selected');
         return '';  // Return an empty string or perhaps an alternative message in the content
@@ -45,18 +46,20 @@ add_filter('voordemensen_buy_content', function($content, $event_id, $atts) {
     return $content;
 }, 10, 3);
 
-function voordemensen_no_event_selected() {
+function voordemensen_no_event_selected()
+{
     // Ensure that this notice only appears in the admin area to the appropriate users
     if (current_user_can('manage_options')) {
         ?>
         <div class="notice notice-error">
-            <p><?php esc_html_e('Error: No event selected. Please choose an event to proceed.', 'my_plugin_textdomain'); ?></p>
+            <p><?php esc_html_e('Error: No event selected. Please choose an event to proceed.', 'voordemensen'); ?></p>
         </div>
         <?php
     }
 }
 add_shortcode('vdm_event_name', 'voordemensen_event_name');
-function voordemensen_event_name($atts = [], $content = null, $tag = '') {
+function voordemensen_event_name($atts = [], $content = null, $tag = '')
+{
     if (is_admin()) {
         return;
     }
@@ -68,7 +71,8 @@ function voordemensen_event_name($atts = [], $content = null, $tag = '') {
 }
 
 add_shortcode('vdm_event_extra', 'voordemensen_event_extra');
-function voordemensen_event_extra($atts = [], $content = null, $tag = '') {
+function voordemensen_event_extra($atts = [], $content = null, $tag = '')
+{
     if (is_admin()) {
         return;
     }
@@ -80,7 +84,8 @@ function voordemensen_event_extra($atts = [], $content = null, $tag = '') {
 }
 
 add_shortcode('vdm_event_description', 'voordemensen_event_description');
-function voordemensen_event_description($atts = [], $content = null, $tag = '') {
+function voordemensen_event_description($atts = [], $content = null, $tag = '')
+{
     if (is_admin()) {
         return;
     }
@@ -92,7 +97,8 @@ function voordemensen_event_description($atts = [], $content = null, $tag = '') 
 
 
 add_shortcode('vdm_event_dates', 'voordemensen_event_dates');
-function voordemensen_event_dates($atts = [], $content = null, $tag = '') {
+function voordemensen_event_dates($atts = [], $content = null, $tag = '')
+{
     if (is_admin()) {
         return;
     }
@@ -135,7 +141,8 @@ function voordemensen_event_dates($atts = [], $content = null, $tag = '') {
 
 
 add_shortcode('vdm_event_duration', 'voordemensen_event_duration');
-function voordemensen_event_duration($atts = [], $content = null, $tag = '') {
+function voordemensen_event_duration($atts = [], $content = null, $tag = '')
+{
     if (is_admin()) {
         return;
     }
@@ -144,7 +151,8 @@ function voordemensen_event_duration($atts = [], $content = null, $tag = '') {
     if ($voordemensen_events) {
         foreach ($voordemensen_events as $allevent) {
             foreach ($allevent->sub_events as $event) {
-                if ($event->event_status != 'pub') continue;
+                if ($event->event_status != 'pub')
+                    continue;
 
                 // Ensure event_end is set and is not zero
                 if (isset($event->event_end) && $event->event_end !== '00:00:00') {
@@ -177,7 +185,7 @@ function voordemensen_event_duration($atts = [], $content = null, $tag = '') {
             }
         }
     }
-    
+
     // Convert the array keys into a string separated by "<br>"
     // Escape each duration string for HTML output
     return implode("<br>", array_map('esc_html', array_keys($durations)));
@@ -185,7 +193,8 @@ function voordemensen_event_duration($atts = [], $content = null, $tag = '') {
 
 
 add_shortcode('vdm_event_location', 'voordemensen_event_location');
-function voordemensen_event_location($atts = [], $content = null, $tag = '') {
+function voordemensen_event_location($atts = [], $content = null, $tag = '')
+{
     if (is_admin()) {
         return;
     }
@@ -214,7 +223,8 @@ function voordemensen_event_location($atts = [], $content = null, $tag = '') {
 
 
 add_shortcode('vdm_tickettypes', 'voordemensen_tickettypes');
-function voordemensen_tickettypes($atts = [], $content = null, $tag = '') {
+function voordemensen_tickettypes($atts = [], $content = null, $tag = '')
+{
     if (is_admin()) {
         return;
     }
@@ -224,7 +234,7 @@ function voordemensen_tickettypes($atts = [], $content = null, $tag = '') {
 
     $options = get_option('voordemensen_options');
     $voordemensen_client_shortname = sanitize_text_field($options['voordemensen_client_shortname']);
-	$voordemensen_client_domainname = sanitize_text_field($options['voordemensen_client_domainname'] ?? 'tickets.voordemensen.nl');
+    $voordemensen_client_domainname = sanitize_text_field($options['voordemensen_client_domainname'] ?? 'tickets.voordemensen.nl');
 
     if ($voordemensen_events) {
         foreach ($voordemensen_events as $allevent) {
@@ -252,7 +262,8 @@ function voordemensen_tickettypes($atts = [], $content = null, $tag = '') {
 }
 
 add_shortcode('vdm_cartbutton', 'voordemensen_cartbutton');
-function voordemensen_cartbutton($atts = [], $content = null, $tag = '') {
+function voordemensen_cartbutton($atts = [], $content = null, $tag = '')
+{
     if (is_admin()) {
         return;
     }
@@ -265,13 +276,14 @@ function voordemensen_cartbutton($atts = [], $content = null, $tag = '') {
     // Sanitize the button label to ensure it's safe for display
     $button_label = esc_html($atts['button']);
 
-    // Properly escape all dynamic data in the JavaScript function call to prevent XSS
-    // Construct the JavaScript call with sanitized session_id for use in the HTML attribute
-    $session_id = voordemensen_get_session_id();
-    $onclick = "vdm_order('cart','" . $session_id . "');";
+    // Create a unique ID for the button
+    $button_id = 'vdm-cart-button-' . uniqid();
 
-    // Construct the button HTML, escaping the entire onclick attribute
-    $content = "<button onclick='" . esc_attr($onclick) . "'>" . $button_label . "</button>";
+    // JavaScript function call will be handled by AJAX
+    $onclick = sprintf("javascript:vdmOrderWithSession('cart', '%s');", esc_js($button_id));
+
+    // Create the button HTML, escaping all output
+    $content = "<button id='" . esc_attr($button_id) . "' onclick='" . esc_attr($onclick) . "'>" . esc_html($button_label) . "</button>";
 
     // Apply a filter to allow overriding of the final content
     $content = apply_filters('voordemensen_cart_content', $content, $atts);
@@ -279,13 +291,14 @@ function voordemensen_cartbutton($atts = [], $content = null, $tag = '') {
     return $content;
 }
 
-add_filter('voordemensen_cart_content', function($content, $atts) {
+add_filter('voordemensen_cart_content', function ($content, $atts) {
     return $content; // This filter currently just returns the content but can be used to modify it
 }, 10, 2);
 
 
 add_shortcode('vdm_eventbuttons', 'voordemensen_eventbuttons');
-function voordemensen_eventbuttons($atts = [], $content = null, $tag = '') {
+function voordemensen_eventbuttons($atts = [], $content = null, $tag = '')
+{
     if (is_admin()) {
         return;
     }
@@ -298,7 +311,8 @@ function voordemensen_eventbuttons($atts = [], $content = null, $tag = '') {
 
         foreach ($voordemensen_events as $allevent) {
             foreach ($allevent->sub_events as $event) {
-                if ($event->event_status != 'pub') continue;
+                if ($event->event_status != 'pub')
+                    continue;
                 $tempEvents[] = array(
                     'datetime' => strtotime($event->event_date . ' ' . $event->event_time),
                     'event' => $event
@@ -306,20 +320,20 @@ function voordemensen_eventbuttons($atts = [], $content = null, $tag = '') {
             }
         }
 
-        usort($tempEvents, function($a, $b) {
+        usort($tempEvents, function ($a, $b) {
             return $a['datetime'] <=> $b['datetime'];
         });
 
         foreach ($tempEvents as $tempEvent) {
             $event = $tempEvent['event'];
             $buttonDate = gmdate('d-m-Y H:i', $tempEvent['datetime']);
-            $sessionId = voordemensen_get_session_id();
+            $button_id = 'vdm-event-button-' . uniqid();
             $eventId = esc_attr($event->event_id);
 
             if ($event->event_free > 0) {
-                $content .= "<button id='btn{$eventId}' onclick='javascript:vdm_order(\"{$eventId}\",\"{$sessionId}\");'>{$buttonDate}</button><br><br>";
+                $content .= "<button id='{$button_id}' onclick='javascript:vdmOrderWithSession(\"{$eventId}\", \"{$button_id}\");'>{$buttonDate}</button><br><br>";
             } else {
-                $content .= "<button disabled style='pointer-events: none !important; filter: brightness(350%);' id='btn{$eventId}'>{$buttonDate}</button><br><br>";
+                $content .= "<button disabled style='pointer-events: none !important; filter: brightness(350%);' id='{$button_id}'>{$buttonDate}</button><br><br>";
             }
         }
     }
@@ -327,33 +341,92 @@ function voordemensen_eventbuttons($atts = [], $content = null, $tag = '') {
 }
 
 add_shortcode('vdm_basketcounter', 'voordemensen_basketcounter');
-function voordemensen_basketcounter($atts = [], $content = null, $tag = '') {
+function voordemensen_basketcounter($atts = [], $content = null, $tag = '')
+{
     if (is_admin()) {
         return;
     }
 
+    $content = "<span class='vdm_basketcounter'>...</span>";
+
+    // Enqueue the script to handle the AJAX call
+    wp_enqueue_script('custom-session', plugin_dir_url(__FILE__) . 'js/vdm_session.js', array('jquery'), null, true);
+    wp_localize_script('custom-session', 'ajaxurl', admin_url('admin-ajax.php'));
+
+    return $content;
+}
+
+add_action('wp_ajax_nopriv_voordemensen_fetch_session_id', 'voordemensen_fetch_session_id_ajax');
+add_action('wp_ajax_voordemensen_fetch_session_id', 'voordemensen_fetch_session_id_ajax');
+
+function voordemensen_fetch_session_id_ajax()
+{
+    check_ajax_referer('voordemensen_session_nonce', 'security');
+
+    if (!isset($_COOKIE['user_token'])) {
+        $token = bin2hex(random_bytes(16));
+        setcookie('user_token', $token, time() + (365 * 24 * 60 * 60), COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true);
+    } else {
+        $token = sanitize_text_field($_COOKIE['user_token']);
+    }
+
+    // Fetch session ID from external server
     $options = get_option('voordemensen_options');
     $voordemensen_client_shortname = sanitize_text_field($options['voordemensen_client_shortname']);
-	$voordemensen_client_domainname = sanitize_text_field($options['voordemensen_client_domainname'] ?? 'tickets.voordemensen.nl');
-    $session_id = voordemensen_get_session_id();
 
-    $response = wp_remote_get('https://tickets.voordemensen.nl/api/' . $voordemensen_client_shortname . '/cart/' . esc_attr($session_id));
+    $response = wp_remote_get('https://tickets.voordemensen.nl/api/'. $voordemensen_client_shortname .'/get-session?token=' . $token);
+
+    if (is_wp_error($response)) {
+        wp_send_json_error('Error fetching session ID: ' . $response->get_error_message());
+    }
+
     $body = wp_remote_retrieve_body($response);
-    $cart = json_decode($body);  
+    $data = json_decode($body, true);
 
-    if (is_array($cart) || is_object($cart)) {
-        $content = count((array) $cart) - 1;  // Cast to array to count items
+    if (isset($data['session_id'])) {
+        $session_id = sanitize_text_field($data['session_id']);
+
+        // Set the cookie to expire in 7 days
+        $cookie_name = 'voordemensen_session_id';
+        $cookie_value = $session_id;
+        $cookie_expiration = time() + (7 * 24 * 60 * 60); // 7 days
+
+        // Set the cookie, ensure HTTPOnly flag is set for security
+        setcookie($cookie_name, $cookie_value, $cookie_expiration, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true);
+
+        wp_send_json_success(['session_id' => $session_id]);
     } else {
-        $content = 'n/a';
+        wp_send_json_error('Session ID not found in response.');
     }
-
-    return "<span class='vdm_basketcounter'>" . esc_html($content) . "</span>";
 }
 
-function voordemensen_get_session_id() {
-    if (!isset($_SESSION['voordemensen_session_id'])) {
-        $_SESSION['voordemensen_session_id'] = bin2hex(random_bytes(16));
+function voordemensen_get_session_id()
+{
+    if (isset($_COOKIE['voordemensen_session_id'])) {
+        return sanitize_text_field($_COOKIE['voordemensen_session_id']);
     }
-    return sanitize_text_field($_SESSION['voordemensen_session_id']);
+
+    // If the cookie is not set, return a placeholder or handle accordingly.
+    return null;
 }
+
+function voordemensen_custom_session_script()
+{
+    wp_enqueue_script('custom-session', plugin_dir_url(__FILE__) . 'js/vdm_session.js', array('jquery'), null, true);
+    wp_localize_script('custom-session', 'ajaxurl', admin_url('admin-ajax.php'));
+
+    // Pass additional data to the script
+    $options = get_option('voordemensen_options');
+    $voordemensen_client_shortname = sanitize_text_field($options['voordemensen_client_shortname']);
+    $voordemensen_client_domainname = sanitize_text_field($options['voordemensen_client_domainname'] ?? 'tickets.voordemensen.nl');
+
+    wp_localize_script('custom-session', 'vdm_basketcounter_data', array(
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('voordemensen_session_nonce'),
+        'client_shortname' => $voordemensen_client_shortname,
+        'domain_name' => $voordemensen_client_domainname
+    ));
+}
+add_action('wp_enqueue_scripts', 'voordemensen_custom_session_script');
+
 ?>

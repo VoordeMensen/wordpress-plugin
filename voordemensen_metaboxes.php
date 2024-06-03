@@ -28,9 +28,9 @@ function voordemensen_custom_box_html($post) {
     if ($voordemensen_events && is_array($voordemensen_events)) {
         wp_nonce_field('voordemensen_save_event_id', 'voordemensen_event_nonce');
 
-        echo '<label for="voordemensen_event_id">' . esc_html__('Evenement:', 'vdm') . '</label>';
+        echo '<label for="voordemensen_event_id">' . esc_html__('Evenement:', 'voordemensen') . '</label>';
         echo '<select name="voordemensen_event_id" id="voordemensen_event_id" class="postbox">';
-        echo '<option value="">' . esc_html__('selecteer...', 'vdm') . '</option>';
+        echo '<option value="">' . esc_html__('selecteer...', 'voordemensen') . '</option>';
 
         usort($voordemensen_events, function($a, $b) {
             return strcmp($a->event_name, $b->event_name);
@@ -48,7 +48,7 @@ function voordemensen_custom_box_html($post) {
         }
         echo '</select>';
     } else {
-        echo esc_html__('Geen evenementen gevonden', 'vdm');
+        echo esc_html__('Geen evenementen gevonden', 'voordemensen');
     }
 }
 

@@ -22,7 +22,7 @@ function voordemensen_settings_init() {
     // Register a new field for client shortname in the "vdm" page
     add_settings_field(
         'voordemensen_client_shortname',
-        __('Klantnaam', 'vdm'),
+        __('Klantnaam', 'voordemensen'),
         'voordemensen_client_shortname_cb',
         'vdm',
         'voordemensen_section_developers'
@@ -31,7 +31,7 @@ function voordemensen_settings_init() {
     // Register a new field for client domain name in the "vdm" page
     add_settings_field(
         'voordemensen_client_domainname',
-        __('Domeinnaam', 'vdm'),
+        __('Domeinnaam', 'voordemensen'),
         'voordemensen_client_domainname_cb',
         'vdm',
         'voordemensen_section_developers'
@@ -40,7 +40,7 @@ function voordemensen_settings_init() {
     // Register a new field for loader type in the "vdm" page
     add_settings_field(
         'voordemensen_loader_type',
-        __('Loader Type', 'vdm'),
+        __('Loader Type', 'voordemensen'),
         'voordemensen_loader_type_cb',
         'vdm',
         'voordemensen_section_developers',
@@ -91,7 +91,7 @@ function voordemensen_validate_options($input) {
  * Section callback function - could have explanatory text or HTML.
  */
 function voordemensen_section_developers_cb($args) {
-    echo '<p id="' . esc_attr($args['id']) . '">' . esc_html__('Verbind deze WordPress-installatie met VoordeMensen.', 'vdm') . '</p>';
+    echo '<p id="' . esc_attr($args['id']) . '">' . esc_html__('Verbind deze WordPress-installatie met VoordeMensen.', 'voordemensen') . '</p>';
 }
 
 /**
@@ -162,7 +162,7 @@ function voordemensen_options_page_html() {
             // Output setting sections and their fields
             do_settings_sections('vdm');
             // Output save settings button
-            submit_button(__('Wijzigingen opslaan', 'vdm'));
+            submit_button(__('Wijzigingen opslaan', 'voordemensen'));
             ?>
         </form>
     </div>

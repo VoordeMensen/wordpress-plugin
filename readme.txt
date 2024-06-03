@@ -5,7 +5,7 @@ Tags: tickets, events, e-commerce
 Requires at least: 5.0
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 2.0.12
+Stable tag: 2.0.13
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,6 +25,8 @@ VoordeMensen is a WordPress plugin that connects your website with the VoordeMen
 This plugin will fetch the VoordeMensen loader from [https://voordemensen.nl](https://voordemensen.nl) and event data from [https://api.voordemensen.nl](https://api.voordemensen.nl) and use it in your WordPress. This way your visitors will be able to buy tickets using VoordeMensen. 
 
 Depending on the loader type you choose in the admin page either [vdm_sideloader.js](https://tickets.voordemensen.nl/demo/vdm_sideloader.js) or [vdm_loader.js](https://tickets.voordemensen.nl/demo/vdm_loader.js) will be loaded.
+
+Additionaly this plugin will connect to [https://tickets.voordemensen.nl](https://tickets.voordemensen.nl) to obtain a unique session id. 
 
 The VoordeMensen [privacy statement](https://voordemensen.nl/privacyverklaring/) applies.
 
@@ -58,8 +60,12 @@ You can create a VoordeMensen account at https://voordemensen.nl.
 
 == Changelog ==
 
+= 2.0.13 = 
+Adding session management using session id's aquired from the VoordeMensen server, making the plugin compatible with caching plugins. 
+
+
 = 2.0.12 =
-Initial public release in the WordPress Plugin directory 
+Initial public release 
 
 = 1.0.10 =
 * Initial release
