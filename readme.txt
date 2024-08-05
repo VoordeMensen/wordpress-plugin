@@ -3,9 +3,9 @@ Contributors: voordemensen
 Donate link: https://voordemensen.nl
 Tags: tickets, events, e-commerce
 Requires at least: 5.0
-Tested up to: 6.5
+Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 2.0.13
+Stable tag: 2.0.14
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,7 +18,7 @@ VoordeMensen is a WordPress plugin that connects your website with the VoordeMen
 * Load the VoordeMensen loader script dynamically based on your site's settings 
 * Preload event data from the VoordeMensen API (see 3rd party connection for more info)
 * Include various metaboxes and shortcodes for enhanced functionality
-* Start a user session for tracking the VoordeMensen cart ID
+* Start a user session for tracking the VoordeMensen cart ID (see 3rd party connection for more info)
 
 == 3rd party connection == 
 
@@ -59,6 +59,11 @@ You can create a VoordeMensen account at https://voordemensen.nl.
 1. VoordeMensen settings page.
 
 == Changelog ==
+
+= 2.0.14 = 
+Fixed a caching issue, make the plugin more stable in a cached enviroment.
+Improved sorting of event_dates and buttons shortcodes.
+
 
 = 2.0.13 = 
 Adding session management using session id's aquired from the VoordeMensen server, making the plugin compatible with caching plugins. 

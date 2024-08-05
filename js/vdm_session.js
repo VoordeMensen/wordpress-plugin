@@ -1,26 +1,45 @@
 function vdmOrderWithSession(eventId, buttonId) {
-    // Check if the session_id cookie is already set
     if (document.cookie.indexOf('voordemensen_session_id') !== -1) {
         const sessionId = getCookie('voordemensen_session_id');
         vdm_order(eventId, sessionId);
     } else {
-        // Make an AJAX request to fetch the session ID
+
+        // Make an AJAX request to fetch the nonce first
         jQuery.ajax({
             url: ajaxurl,
             method: 'POST',
             data: {
-                action: 'voordemensen_fetch_session_id',
+                action: 'voordemensen_generate_nonce',
                 security: vdm_basketcounter_data.nonce
             },
             success: function(response) {
-                if (response.success && response.data.session_id) {
-                    vdm_order(eventId, response.data.session_id);
+                if (response.success && response.data.nonce) {
+
+                    // Now make an AJAX request to fetch the session ID
+                    jQuery.ajax({
+                        url: ajaxurl,
+                        method: 'POST',
+                        data: {
+                            action: 'voordemensen_fetch_session_id',
+                            security: response.data.nonce
+                        },
+                        success: function(response) {
+                            if (response.success && response.data.session_id) {
+                                vdm_order(eventId, response.data.session_id);
+                            } else {
+                                console.error('Failed to fetch session ID:', response.data);
+                            }
+                        },
+                        error: function(error) {
+                            console.error('Error fetching session ID:', error);
+                        }
+                    });
                 } else {
-                    console.error('Failed to fetch session ID:', response.data);
+                    console.error('Failed to generate nonce:', response.data);
                 }
             },
             error: function(error) {
-                console.error('Error fetching session ID:', error);
+                console.error('Error generating nonce:', error);
             }
         });
     }

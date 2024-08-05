@@ -117,25 +117,33 @@ function voordemensen_event_dates($atts = [], $content = null, $tag = '')
                     // Create a DateTime object from the event date and time
                     $datetime = new DateTime($event->event_date . ' ' . $event->event_time);
 
-                    // Format the date and time and store it in the array
-                    $datetimes[] = $datetime->format('d-m-Y - H:i');
+                    // Store the DateTime object and its formatted string
+                    $datetimes[] = [
+                        'datetime' => $datetime,
+                        'formatted' => $datetime->format('d-m-Y - H:i')
+                    ];
                 } catch (Exception $e) {
                     // Handle the exception if the date format is incorrect
-                    continue; // Optionally log this error or handle it as required
+                    continue;
                 }
             }
         }
 
-        // Sort the datetimes array
+        // Sort the datetimes array using the DateTime objects
         usort($datetimes, function ($a, $b) {
-            return strcmp($a, $b);
+            return $a['datetime'] <=> $b['datetime'];
         });
 
+        // Extract the formatted strings
+        $formatted_dates = array_column($datetimes, 'formatted');
+
         // Concatenate them with "<br>"
-        $datetimes = implode("<br>", array_map('esc_html', $datetimes));
+        $output = implode("<br>", array_map('esc_html', $formatted_dates));
+    } else {
+        $output = '';
     }
 
-    return $datetimes;
+    return $output;
 }
 
 
@@ -308,15 +316,22 @@ function voordemensen_eventbuttons($atts = [], $content = null, $tag = '')
 
     if ($voordemensen_events) {
         $tempEvents = [];
+        $timezone = wp_timezone(); // Get WordPress timezone
 
         foreach ($voordemensen_events as $allevent) {
             foreach ($allevent->sub_events as $event) {
                 if ($event->event_status != 'pub')
                     continue;
-                $tempEvents[] = array(
-                    'datetime' => strtotime($event->event_date . ' ' . $event->event_time),
-                    'event' => $event
-                );
+                try {
+                    $datetime = new DateTime($event->event_date . ' ' . $event->event_time, $timezone);
+                    $tempEvents[] = array(
+                        'datetime' => $datetime,
+                        'event' => $event
+                    );
+                } catch (Exception $e) {
+                    // Handle invalid date/time
+                    continue;
+                }
             }
         }
 
@@ -326,7 +341,7 @@ function voordemensen_eventbuttons($atts = [], $content = null, $tag = '')
 
         foreach ($tempEvents as $tempEvent) {
             $event = $tempEvent['event'];
-            $buttonDate = gmdate('d-m-Y H:i', $tempEvent['datetime']);
+            $buttonDate = $tempEvent['datetime']->format('d-m-Y H:i');
             $button_id = 'vdm-event-button-' . uniqid();
             $eventId = esc_attr($event->event_id);
 
@@ -359,8 +374,19 @@ function voordemensen_basketcounter($atts = [], $content = null, $tag = '')
 add_action('wp_ajax_nopriv_voordemensen_fetch_session_id', 'voordemensen_fetch_session_id_ajax');
 add_action('wp_ajax_voordemensen_fetch_session_id', 'voordemensen_fetch_session_id_ajax');
 
+add_action('wp_ajax_nopriv_voordemensen_generate_nonce', 'voordemensen_generate_nonce_ajax');
+add_action('wp_ajax_voordemensen_generate_nonce', 'voordemensen_generate_nonce_ajax');
+
+function voordemensen_generate_nonce_ajax()
+{
+    wp_send_json_success(['nonce' => wp_create_nonce('voordemensen_session_nonce')]);
+}
+
 function voordemensen_fetch_session_id_ajax()
 {
+
+    check_ajax_referer('voordemensen_session_nonce', 'security');
+
     check_ajax_referer('voordemensen_session_nonce', 'security');
 
     if (!isset($_COOKIE['user_token'])) {
